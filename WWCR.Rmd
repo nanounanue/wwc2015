@@ -1,0 +1,918 @@
+---
+title: "Análisis de datos con R"
+author: "Adolfo De Unánue T."
+date: "19/08/2015"
+output: 
+  ioslides_presentation:
+    widescreen: true
+    smaller: true
+    fig_width: 5
+    fig_height: 4
+runtime: shiny
+---
+
+# ¿Por qué R?
+
+## Algunas características de R
+
+
+* Lenguaje estadístico.
+* Gráficas, manipulación de datos.
+* Miles de paquetes de algoritmos estadísticos, aprendizaje de máquina, minería.
+* Soporte para Hadoop, Big data, Multiprocesador, ejecución en paralelo.
+* ¡Conexión con casi todo!
+* Geoespacial, series de tiempo, bases de datos, etc.
+* Reportes y presentaciones automáticos (¡esta presentación por ejemplo!)
+
+
+# RStudio: quicktour
+
+# REPL: glimpse
+
+
+# Bases del Lenguaje
+
+## En `R` todo son
+
+* Objetos
+    * Pueden ser vistos como un espacio de almacenamiento y un nombre asociado a ello.
+    * Todo está  en la memoria de la computadora (por el momento).
+
+* Funciones
+    * Tipo especial de objeto.
+    * Realiza ciertas operaciones, toma algunos argumentos y produce un resultado de la realización de las operaciones.
+
+
+## Asignación
+
+* Los objetos y funciones se almacenan usando el operador de asignación `<-`
+
+
+```{r}
+x <- 1345
+y <- 2
+```
+
+
+* Si queremos ver lo que esta almacenado tecleamos su nombre.
+
+```{r}
+  x
+  y
+```
+
+## ¿Qué hay ahí?
+
+* Si queremos ver todos los objetos en memoria: `ls()` u `objects()`
+
+```{r}
+ls()
+```
+
+
+## Vectores
+
+Un vector es un conjunto ordenado de cosas, la función para **crearlo** es `c()` de _concatenar_ ...
+
+```{r}
+v <- c(4, 18, 23.6, 23)
+v
+```
+
+Una característica importante del vector es su longitud
+
+```{r}
+length(v)
+```
+
+## Vectores
+
+Es posible generar vectores como _secuencias_:
+
+```{r}
+x <- 1:10
+x
+10:15 - 1 ## ¿Qué pasó aquí?
+```
+
+
+```{r}
+10:(15 - 1) ## Mucho mejor
+```
+
+## Vectores
+
+Se pueden generar secuencias que no sean enteros
+
+```{r}
+seq(from = -4, to=3, by = 0.5)
+```
+
+```{r}
+seq(from = 1, to = 5, length = 3)
+```
+
+```{r}
+seq(length = 10, from = -1, by = 0.2)
+```
+
+## Vectores
+
+También se puede crear _repitiendo_ un elemento:
+
+```{r}
+rep(5, 8)
+```
+
+
+```{r}
+rep("character", 5)
+```
+
+
+## Vectores
+
+Los elementos del vector se pueden obtener mediante el índice
+
+```{r}
+v[2]
+```
+
+_Nota que en_ `R` el índice empieza en `1`.
+
+```{r}
+v[1] <- "¡hola!"
+v
+```
+
+Y podemos agregar nuevos elementos
+
+```{r}
+v[length(v) + 1] <- -45
+v
+```
+
+## Vectores
+
+Las operaciones sobre vectores están optimizadas, en el _caló_ de `R` se dice que están _vectorizadas_.
+
+
+```{r}
+v <- c(2, 3, 4, 6)
+x <- sqrt(v)
+x
+```
+
+Operan elemento por elemento, por lo que los vectores en `R` **no** son los vectores de las clases de mate.
+
+Por ejemplo, estas operaciones no tienen sentido para vectores matemáticos:
+
+```{r}
+v + 1
+```
+
+
+```{r}
+v == c(1,3,5,7)
+```
+
+## Vectores
+
+Otra característica es que hay un _roll-up_ de vectores
+
+```{r}
+v1 <- c(4, 6, 87)
+v2 <- c(2,10)
+v1+v2 
+```
+
+¿Puedes ver que pasó?
+
+## Vectores
+
+Una de las operaciones que uno quiere realizar cuando analiza datos es el _filtrado_, por ejemplo, quiero ver cuales son positivos
+
+```{r}
+x <- c(1, -3, -2, 4, -10, 2, 3, 90)
+x > 0
+```
+
+Entonces, puedo utilizar este índice lógico, para _extraer_ o _filtrar_ los positivos:
+
+```{r}
+x[x>0]
+```
+
+o los mayores de `2`
+
+```{r}
+x[x > 2]
+```
+
+## Vectores
+
+Los índices en `R` son más versátiles que en otros lenguajes, por ejemplo, es posible usar _índices vectoriales_
+
+```{r}
+x
+x[c(4, 2)]
+```
+
+## Vectores
+
+Lo que sigue, es muy intuitivo, pero pude confundirte si has programado en `python`. El índice _negativo_ **remueve**
+
+
+```{r}
+x
+x[-1]
+```
+
+
+```{r}
+x[-c(1, 5)]
+```
+
+Nota como ninguna operación de filtrado _modifica_ el vector original `x`.
+
+## Vectores
+
+Hasta ahora hemos visto vectores numéricos, pero pueden ser de cualquier tipo:
+
+```{r}
+flotantes <- c(1.1, 1.3, .4)
+flotantes
+```
+
+```{r}
+letras <- c('a', 'b', 'c')
+letras
+```
+
+## Vectores
+
+Pero si los mezclas, ocurre una operación de _transformación_ o _casting_ al elemento más complejo.
+
+```{r}
+enteros <- c(1, 2, 3)
+enteros
+
+enteros <- c(1,2,3, 4.1)
+enteros
+
+enteros <- c(1,2,3, "a")
+enteros
+```
+
+## Vectores
+
+El vector se puede analizar rápidamente, si es numérico usando lo siguiente:
+
+```{r}
+x <- c(1,2,3,4,5,6)
+sum(x) # Total
+mean(x) # Promedio
+sd(x) # Desviación estándar
+summary(x) # O una descripción estadística completa
+```
+
+## Vectores
+
+Y se puede analizar visualmente también:
+
+```{r}
+names(x) <- c("algo", "otro", "manzanas", "peras", "quesos", "jitomates")
+barplot(x) 
+```
+
+## Vectores
+
+Si tienes dos variables
+
+```{r}
+y <- rnorm(1000, mean= 0, sd=1)  # Genero números aleatorios distribuidos normalmente (*)
+x <- rnorm(1000, mean=3, sd=1)
+plot(x,y, main="Scatterplot")
+```
+
+
+## Vectores
+
+Por último, es posible preguntar si un objeto es un vector:
+
+```{r}
+
+is.vector(x)
+
+is.numeric(x)
+
+is.character(x)
+```
+
+
+## Factores
+
+Cuando uno quiere analizar datos, regularmente necesita variables que funcionan como etiquetas. Estas etiquetas pueden ser contadas, pero no sumadas. A este tipo de variables se les conoce como variables _categóricas_ y en `R` se llaman **factores**.
+
+Es posible crearlas a partir de un `vector`
+
+```{r}
+f <- c("M", "F", "M", "M", "F", "M")
+f <- factor(f)
+f
+```
+
+Y pueden tener una descripción larga (`label`)
+
+```{r}
+f <- factor(c("M", "F", "M", "M", "F", "M", "F"), levels=c("M", "F"), labels=c("Hombre", "Mujer"))
+f
+```
+
+
+## Factores
+
+Hagámos una copia de `f`
+
+```{r}
+g <- f
+g
+f
+```
+
+## Factores
+
+Los `levels` se pueden extraer con la siguiente función:
+
+```{r}
+levels(g)
+```
+
+## Factores
+
+¿Qué pasa si quiero agregar un nuevo elemento al final del factor?
+
+```{r}
+g[length(g)+1] <- "NR"
+g
+```
+
+Mmmm, como el _nivel_ `NR` no estaba definido, lo agrega como un valor inexistente (`NA`).
+
+## Factores
+
+```{r}
+g <- factor(c("a", "b", "a", "a", "b", "b", "b"), levels=c("a", "b", "c"))
+g
+```
+
+
+```{r}
+g[length(g)+1] <- "c"
+g
+```
+
+## Factores
+
+Una tabla con los conteos por nivel se puede obtener fácilmente
+
+```{r}
+table(g)
+```
+
+## Factores
+
+```{r}
+a <- factor(c("estudiante", "profesor", "estudiante", "profesor", "estudiante", "estudiante", "estudiante"))
+a
+```
+
+Es posible mezclar los dos factores en una tabla 
+
+```{r}
+t <- table(a,f)
+t
+```
+
+Nota como se le está asignando el género por renglón.
+
+## Factores
+
+Una tabla marginal, es aquella que resume los conteos por dimensión o _margen_
+
+```{r}
+margin.table(t, 1)
+margin.table(t,2)
+```
+
+## Factores
+
+Y una tabla de _proporciones_ nos da (obviamente) la proporción
+
+```{r}
+prop.table(t, 2) 
+```
+
+## Factores
+
+LA representación visual de un factor es una gráfica de barras
+
+```{r}
+plot(f, main = "Género")
+```
+
+
+## Listas
+
+Otro tipo de objeto son las _listas_, son parecidas a los vectores, pero con una diferencia importante: pueden tener los elementos de diferentes tipos.
+
+```{r}
+lista <- list(1, 2, 3, 4, 5)
+lista
+```
+
+## Listas
+
+El operador de extracción (`[`), devuelve una _lista_
+
+```{r}
+lista[1]
+is.list(lista[1])
+is.vector(lista[1])
+```
+
+
+## Listas
+
+El operador `[[` devuelve un _vector_
+
+
+```{r}
+lista[[1]]
+is.list(lista[[1]])
+is.vector(lista[[1]])
+```
+
+## Listas
+
+Como mencioné es posible tener varios tipos de datos mezclados en una lista (¿Puedes identificarlos?)
+
+```{r}
+edificio <- list(direccion="Dinamarca 73", dimensiones=c(10, 15, 2.5), renta.mensual=6300)
+edificio
+```
+
+## Listas
+
+Existe otro operador de acceso: `$` 
+
+```{r}
+edificio$renta.mensual
+edificio[3]
+edificio[[3]]
+```
+
+## Listas
+
+```{r}
+names(edificio)
+```
+
+Se pueden agregar elementos a la lista
+
+```{r}
+edificio$dueños <- c("Ana", "Miguel")
+names(edificio)
+```
+
+## Listas
+
+Al igual que en el caso de los vectores, el índice negativo **remueve**
+
+```{r}
+edificio <- edificio[-3]
+edificio
+```
+
+
+## Data frames
+
+* Se podría argumentar, que cuando se piensa en análisis de datos, se piensa en "tablas" o en "bases de datos", la característica común es que son objetos rectangulares (de dos dimensiones).
+
+* `R` proveé una abstración para los datos en formato rectangular llamado `data.frame`
+
+```{r}
+df <- data.frame(var.1=c('A', 'B', 'C', 'A'), var.2=c('hola', 'adios', 'ciao', 'juan'), var.3=c(1, 2, 3, 4.5))
+df
+```
+
+## Data frames
+
+La extracción ahora debe de hacerse en dos dimensiones (renglones, columnas)
+
+```{r}
+df[3,1]
+```
+
+Extraer un renglón
+
+```{r}
+df[3,]
+```
+
+
+
+## Data frames
+
+Extraer una columna
+
+```{r}
+df[,3]
+```
+
+Se puede utilizar el nombre de la columna para extraer la columna completa
+
+```{r}
+df$var.3
+```
+
+
+## Data frames
+
+La extracción "mágica" se preserva también en los `data.frame`s
+
+```{r}
+df[df$var.3 > 2,]
+```
+
+
+```{r}
+
+df[df$var.1 == "A", "var.3"]
+```
+
+## Data frames
+
+Así como los vectores (y sus derivados) tenían longitud, los `data.frame`s tiene **tamaño** y es bidimensional
+
+```{r}
+dim(df)
+```
+
+
+
+```{r}
+nrow(df)
+ncol(df)
+```
+
+
+```{r}
+names(df)
+```
+
+
+# Ciencia de datos
+
+
+## Actividades de la ciencia de datos
+
+1. Leer un conjunto de datos
+2. Limpiarlo
+3. Manipularlo
+4. Explorarlo
+4. Guardarlo
+4. Modelarlo
+4. Comunicarlo
+4. Productificarlo
+
+
+## Dataset
+
+* Vamos a utilizar un conjunto de datos (_data set_) que describe los accidentes en trenes en 2015. 
+
+* Lo obtuve de esta página [FRA Office of Safety Analysis Web Site](http://safetydata.fra.dot.gov/officeofsafety/default.aspx)
+    - En el menú de `Downloads` y seleccioné **Accident Data as reported by Railroads**.
+    - Elegí los parámetros por default, y pedí que la descarga fuera en formato `TXT` (en realidad es un `csv`).
+
+
+## Leer
+
+El primer paso es _cargar_ el data set a `R`
+
+```{r}
+accidents.df <- read.csv(file="1417426.txt", header=TRUE, sep=",", quote="\"", as.is = TRUE)
+# accidents.df
+dim(accidents.df)
+```
+
+¿Cuántos accidentes están reportados? ¿Cuántas variables tiene el data set?
+
+## Leer
+
+La estructura del data set se puede obtener con `str`
+
+```{r}
+str(accidents.df)
+```
+
+El significado de cada columna se puede ver en el archivo `accfile_ThruMay2011.pdf` en la carpeta del proyecto.
+
+## Leer
+
+* `R` también puede leer datos desde la web, scrapear, usar bases de datos, leer archivos de Excel, etc. 
+
+* Si tienes dudas podemos discutirlo al final de la clase. `(^_^)`
+
+# Limpieza
+
+## Manipular
+
+* Como puedes observar, los datos (cuando existen), regularmente son una porqueria. Es necesario **manipularlos**: Limpiarlos  y acomodarlos para que puedan servir al análisis.
+
+* Para esto utilizaremos dos _bibliotecas_ de funciones: `dplyr` y `tidyr`. 
+
+* Siempre es útil tener a la mano [esto](https://docs.google.com/viewer?url=https%3A%2F%2Fwww.rstudio.com%2Fwp-content%2Fuploads%2F2015%2F02%2Fdata-wrangling-cheatsheet.pdf).
+
+```{r}
+library(dplyr)
+library(tidyr)
+```
+
+
+## Manipular
+
+Primero vamos a convertir el `data.frame` a una tabla de `dplyr`
+
+```{r}
+accidents <- tbl_df(accidents.df)
+accidents
+
+# Más poderoso que str()
+# glimpse(accidents)  
+```
+
+Observa como cambió la presentación en el `repl` de la tabla.
+
+## Manipular
+
+* `dplyr` maneja 5 verbos para la manipulación de los datos.
+
+    - `filter`
+    - `select`
+    - `mutate`
+    - `arrange`
+    - `summarize`
+
+Además `dplyr` popularizó el operador de _entubamiento_ : `%>%`.
+    
+## Manipular
+
+Nuestro plan de batalla será el siguiente:
+
+1. Quitar las columnas que no nos parecen interesantes.
+2. Ajustar el _tipo_ de las columnas para su mejor representación.
+3. Crear y/o limpiar columnas
+
+## Manipular
+
+```{r}
+accidents <- accidents %>%
+  select(month=IMO, hour=TIMEHR, minutes=TIMEMIN, ampm=AMPM, car.initials.1=RRCAR1, car.number.1=CARNBR1, car.initials.2=RRCAR2, car.number.2=CARNBR2, accident.type=TYPE, cars.hazmat=CARS, cars.hazmat.damaged=CARSDMG, cars.hazmat.realeased=CARSHZD, persons.evacuated=EVACUATE, nearest.city=STATION, state=STATE, temperature=TEMP, visibility=VISIBLTY, weather=WEATHER, train.speed=TRNSPD, train.speed.type=TYPSPD, train.direction=TRNDIR, tonnage=TONS, train.type=TYPEQ, primary.cause=CAUSE, secondary.cause=CAUSE2, killed=CASKLD, injured=CASINJ, lat=Latitude, long=Longitud)
+
+accidents
+```
+
+
+## Manipular
+
+Muchas variables son categóricas, pero nuestro _data set_ las tiene como caracteres. Arreglémos eso.
+
+```{r}
+accidents <- accidents %>% 
+  mutate(car.1 = paste(car.initials.1, car.number.1, sep="-")) %>%
+  mutate(car.2 = paste(car.initials.2, car.number.2, sep="-")) %>%
+  mutate_each(funs(as.factor), c(ampm, hour, minutes, month, nearest.city, state, car.1, car.2, accident.type))
+
+## glimpse(accidents)
+
+```
+
+* Ejercicio: ¿Qué otras variables son categóricas? Modifica el código para que así lo sea.
+* Ejercicio: ¿Cómo removemos `car.initials.x` y `car.number.x`?
+* Ejercicio: Usando el pdf, ¿Cómo modificas el código para que incluya las etiquetas en lugar de los códigos?
+* Ejercicio: La temperatura está en Fahrenheit ¿Cómo la transformarías a Celsius?
+
+
+## Guardar
+
+Con lo que hemos hecho, es mejor guardar el avance que llevamos. Así, si posteriormente queremos regresar a este estado (si nos equivocamos o algo parecido) podrémos hacerlo.
+
+```{r}
+saveRDS(object = accidents, file="accidents.clean.rds")
+```
+
+Esto lo guardará en binario, en un formato específico de `R`.
+
+_Nota que_ `R` _también podrá guardar en Excel, csv, bases de datos, etc._
+
+# Análisis
+
+## Explorar: Estadistica descriptiva
+
+Ahora estamos listos para analizar, el primer paso es limpiar nuestro ambiente (no necesario, pero ampliamente recomendado)
+
+```{r}
+#rm(list=ls())
+```
+
+Y luego leer nuestro `data.frame`
+
+```{r}
+accidents <- readRDS("accidents.clean.rds")
+```
+
+## Explorar: : Estadistica descriptiva
+
+Primero veamos el _data set_ completo
+
+```{r}
+# summary(accidents)
+```
+
+## Explorar: : Estadistica descriptiva
+
+Pero es posible responder preguntas más específicas:
+
+* ¿Cuántos accidentes por estado y por tipo?
+
+```{r}
+accidents %>%
+  group_by(state, accident.type) %>%
+  summarize(n_obs = n())
+```
+
+## Explorar: : Estadistica descriptiva
+
+* ¿Cuál es el Top 5 de estados por accidentes?
+
+```{r}
+accidents %>%
+  group_by(state) %>%
+  summarize(n_obs = n()) %>%
+  arrange(desc(n_obs)) %>%
+  head()
+```
+
+## Explorar: : Estadistica descriptiva
+
+* ¿Cuál es el mes con más accidentes? ¿Cuál es la temperatura promedio?
+
+```{r}
+accidents %>%
+  group_by(month) %>%
+  summarise(n_obs = n(), mean.temperature = mean(temperature))
+```
+
+## Explorar: : Estadistica descriptiva
+
+**Ejercicio:** ¿Cuál es el estado con más muertes? ¿Con más heridos? ¿La hora con mayor accidentes? 
+
+## Exploración visual
+
+Aunque ya vimos el sistema básico de graficación de `R`, ahora veremos dos _bibliotecas_ muy potentes: 
+
+* `ggplot`
+* `ggvis`
+
+Ambas están basadas en algo que se llama **gramática de graficación** y la idea principal es estar agregando capa a capa los elementos de una gráfica (datos, ejes, metadata, etc)
+
+```{r}
+library(ggplot2)
+library(ggvis)
+```
+
+
+## Explorar: ggplot  {.smaller}
+
+Empecemos con algo sencillo: Temperatura por mes
+```{r}
+ggplot(data = accidents, aes(x=month, y=temperature)) + 
+         geom_point(alpha=.4, size=4, color="#880011", position=position_jitter()) + 
+           labs(x="Mes", y ="Temperatura (°F)") + 
+          ggtitle("Temperatura 2015")
+```
+
+## Explorar: ggplot  {.smaller}
+
+
+Para esta gráfica quizá es mejor mostrar un _boxplot_
+
+```{r}
+ggplot(data = accidents, aes(x=month, y=temperature)) + 
+         geom_boxplot(outlier.colour = "blue") + 
+           labs(x="Mes", y ="Temperatura (°F)") + 
+          ggtitle("Temperatura 2015")
+```
+
+
+## Explorar: ggplot  {.smaller}
+
+
+Pero extraño los puntos de temperatura...
+
+```{r}
+ggplot(data = accidents, aes(x=month, y=temperature)) + 
+         geom_boxplot(outlier.colour = "darkred") + geom_jitter(alpha=0.3, shape=16, position=position_jitter(0.2), color="#880011") +
+           labs(x="Mes", y ="Temperatura (°F)") + ggtitle("Temperatura 2015")
+```
+
+## Explorar: ggplot  {.smaller}
+
+Si no nos gusta el _tema_ de la gráfica, podemos cambiarlo a uno que más nos guste. 
+
+Por ahora bajemos temas de la red
+
+```{r}
+library(ggthemes)
+```
+
+Los diferentes temas se pueden ver [aquí](https://github.com/jrnold/ggthemes).
+
+## Explorar: ggplot  {.smaller}
+
+```{r}
+ggplot(data = accidents, aes(x=month, y=temperature)) + 
+         geom_boxplot(outlier.colour = "darkred") + geom_jitter(alpha=0.3, shape=16, position=position_jitter(0.2), color="#880011") +
+           labs(x="Mes", y ="Temperatura (°F)") + ggtitle("Temperatura 2015") + theme_hc()
+``` 
+
+## Explorar: ggplot
+
+```{r}
+ggplot(data = accidents, aes(x=accident.type, y=killed)) + 
+         geom_boxplot(outlier.colour = "darkred") +
+           labs(x="Tipo de Accidente", y ="Decesos") + theme_hc()
+``` 
+
+
+## Explorar: ggplot
+
+Es posible usar `dplyr` con `ggplot`
+
+```{r}
+accidents %>%
+  group_by(state) %>% summarize(n_obs = n()) %>%  arrange(desc(n_obs)) %>%
+  ggplot(aes(x=state, y = n_obs)) + geom_bar(stat="identity") + ggtitle("Accidentes por estado") + theme_hc() + labs(y="Número de Accidentes")
+```
+
+## Explorar: ggplot
+
+Podemos profundizar el análisis, dividiendo por tipo de accidente
+
+```{r, echo=FALSE, fig.heigh=8, fig.width=10}
+accidents %>%
+  group_by(state, accident.type) %>% summarize(n_obs = n()) %>%  arrange(desc(n_obs)) %>%
+  ggplot(aes(x=state, y = n_obs)) + geom_bar(stat="identity") + ggtitle("Tipos de accidente por estado") + theme_hc() + 
+  labs(x="Estados", y="Número de Accidentes") + facet_wrap(~accident.type)
+```
+
+
+
+# Comunicar
+
+
+## Comunicar
+
+Este documento en particular, funciona con una extensión del lenguaje [`markdown`](http://es.wikipedia.org/wiki/Markdown), llamada `Rmd`. Esta extensión permite _embeber_ código de `R` y ejecutarlo en el documento. 
+
+
+## Comunicar
+
+Además el documento que estás viendo utiliza tecnología de `RStudio` llamada [`shiny`](http://shiny.rstudio.com/) la cual agrega interactividad a los documentos, además de permitir aplicaciones web completas.
+
+Puedes aprender más en esta liga [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
+
+# Productificar
+
+## Producto de datos
+
+Es posible utilizar en el documento interactividad mediante `shiny`. La salida será actualizada automáticamente cuando los elementos de interacción cambien. 
+
+```{r, echo=FALSE}
+inputPanel(
+  selectInput("n_breaks", label = "Number of bins:",
+              choices = c(10, 20, 35, 50), selected = 20),
+  
+  sliderInput("bw_adjust", label = "Bandwidth adjustment:",
+              min = 0.2, max = 2, value = 1, step = 0.2)
+)
+
+renderPlot({
+  hist(accidents$injured, probability = TRUE, breaks = as.numeric(input$n_breaks),
+       xlab = "Duration (minutes)", main = "Geyser eruption duration")
+  
+  dens <- density(accidents$injured)
+  lines(dens, col = "blue")
+})
+```
