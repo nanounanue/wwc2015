@@ -11,6 +11,14 @@ output:
 runtime: shiny
 ---
 
+# Introducción
+
+## Repositorio
+
+* Página: `https://github.com/nanounanue/wwc2015`
+
+* Repo: `git@github.com:nanounanue/wwc2015.git`
+
 # ¿Por qué R?
 
 ## Algunas características de R
